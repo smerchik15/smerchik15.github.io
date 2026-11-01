@@ -1,31 +1,33 @@
 (() => {
-const d=window.PORTFOLIO, $=s=>document.querySelector(s);
-const text=(s,v)=>$(s).textContent=v;
-document.querySelectorAll('[data-name]').forEach(x=>x.textContent=d.name);
-document.querySelectorAll('[data-github]').forEach(x=>x.href=safeUrl(d.github));
-text('#tagline',d.tagline);text('#intro',d.intro);text('#about-title',d.aboutTitle);text('#about-text',d.about);text('#approach-text',d.approach);
-document.title=d.name+' — мастерская проектов';
-function safeUrl(v){try{const u=new URL(v);return ['https:','http:'].includes(u.protocol)?u.href:'#';}catch{return '#';}}
+'use strict';
+const d=window.PORTFOLIO,$=s=>document.querySelector(s);
 function el(tag,cls,txt){const n=document.createElement(tag);if(cls)n.className=cls;if(txt)n.textContent=txt;return n;}
-const dice='<svg viewBox="0 0 130 120" aria-hidden="true"><path d="M65 7 119 39 109 94 65 115 18 91 10 39Z M65 7 38 48 92 48 65 7 M38 48 65 98 92 48 119 39 M10 39 38 48 18 91 65 98 109 94 92 48 M65 98 65 115" fill="none" stroke="currentColor" stroke-width="2"/><text x="65" y="76" text-anchor="middle" fill="currentColor" font-size="28">20</text></svg>';
-const waves='<div class="wave" aria-hidden="true">'+ '<i></i>'.repeat(11)+'</div>';
+function safeUrl(v){try{const u=new URL(v);return ['https:','http:'].includes(u.protocol)?u.href:'#';}catch{return '#';}}
+function link(label,url,cls){const n=el('a',cls,label);n.href=safeUrl(url);n.target='_blank';n.rel='noopener noreferrer';return n;}
+document.querySelectorAll('[data-name]').forEach(n=>n.textContent=d.name);
+document.querySelectorAll('[data-github]').forEach(n=>n.href=safeUrl(d.github));
+[['#tagline','tagline'],['#intro','intro'],['#about-title','aboutTitle'],['#about-text','about'],['#approach-text','approach']].forEach(([s,k])=>$(s).textContent=d[k]);
+document.title=d.name+' — проекты и работа';$('#year').textContent=new Date().getFullYear();
+$('#project-count').textContent=String(d.projects.length).padStart(2,'0');
+const previews={forge:'forge-preview.png',voice:'voice-preview.png'};
 d.projects.forEach((p,i)=>{
- const a=el('article','project');a.dataset.category=p.category;
- const cover=el('div','project-visual cover-'+(p.id==='tick'?'tick':p.id==='forge'?'forge':'voice'));
- cover.setAttribute('aria-hidden','true');
- cover.innerHTML='<span class="cover-number">0'+(i+1)+' / '+({games:'PLAY',useful:'CREATE',training:'PRACTICE'}[p.category]||'PROJECT')+'</span>';
- if(p.id==='tick')cover.innerHTML+='<img class="tick-original" src="tick-original.svg" alt=""><strong>КЛЕЩ</strong><small>BLOOD GAINS</small>';
- else if(p.id==='forge')cover.innerHTML+=dice+'<strong>Character Forge</strong><small>A NEW STORY AWAITS</small>';
- else cover.innerHTML+=waves+'<strong>Голос.</strong>';
- a.append(cover,el('p','project-type',p.type),el('h3','',p.title),el('p','subtitle',p.subtitle),el('p','description',p.description));
- const tags=el('div','tags');p.tags.forEach(t=>tags.append(el('span','',t)));a.append(tags);
- const links=el('div','project-links');const link=el('a','',p.cta+' ↗');link.href=safeUrl(p.url);link.target='_blank';link.rel='noopener noreferrer';links.append(link);
- if(p.source){const src=el('a','','Код ↗');src.href=safeUrl(p.source);src.target='_blank';src.rel='noopener noreferrer';links.append(src);}a.append(links);$('#project-list').append(a);
+ const a=el('article','project'+(p.id==='tick'?' featured':''));a.dataset.category=p.category;
+ const visual=link('',p.url,'project-visual cover-'+(['tick','forge','voice'].includes(p.id)?p.id:'generic'));visual.setAttribute('aria-label',p.cta+': '+p.title);
+ visual.append(el('span','cover-number',String(i+1).padStart(2,'0')+' / '+({games:'ИГРА',training:'ПРАКТИКА',useful:'ИНСТРУМЕНТ'}[p.category]||'ПРОЕКТ')));
+ if(p.id==='tick'){const image=el('img','tick-original');image.src='tick-original.svg';image.alt='Оригинальная иллюстрация клеща из игры';image.loading='lazy';visual.append(image,el('span','cover-label','BLOOD GAINS'));}
+ else if(previews[p.id]){const frame=el('div','browser-frame');const bar=el('div','browser-bar');bar.append(el('span','','● ● ●'),el('span','',p.id==='forge'?'Character Forge':'Голос · личная студия'));const image=el('img');image.src=previews[p.id];image.alt='Снимок интерфейса '+p.title;image.loading='lazy';image.width=p.id==='voice'?855:699;image.height=p.id==='voice'?664:662;frame.append(bar,image);visual.append(frame);}
+ else visual.append(el('span','generic-name',p.title));
+ const body=el('div','project-body');body.append(el('p','eyebrow',p.type),el('h3','',p.title),el('p','project-subtitle',p.subtitle),el('p','project-description',p.description));
+ const tags=el('div','tags');p.tags.forEach(t=>tags.append(el('span','',t)));body.append(tags);
+ if(p.details?.length){const details=el('details','project-details');details.append(el('summary','','Что внутри'));const list=el('ul');p.details.forEach(t=>list.append(el('li','',t)));details.append(list);body.append(details);}
+ const links=el('div','project-links');links.append(link(p.cta+' ↗',p.url,'project-cta'));if(p.source)links.append(link('Исходники ↗',p.source,'source-link'));body.append(links);a.append(visual,body);$('#project-list').append(a);
 });
-$('.filters sup').textContent=String(d.projects.length).padStart(2,'0');
-(d.work||[]).forEach(w=>{const a=el('article','work-item');a.append(el('p','eyebrow',w.label),el('h3','',w.title),el('p','',w.text));if(w.url){const l=el('a','text-link',w.cta+' ↗');l.href=safeUrl(w.url);l.target='_blank';l.rel='noopener noreferrer';a.append(l);}$('#work-list').append(a);});
-d.traits.forEach((t,i)=>{const n=el('div','trait');n.append(el('span','','0'+(i+1)),el('h3','',t.title),el('p','',t.text));$('#traits').append(n);});
-document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));document.querySelectorAll('.project').forEach(x=>x.hidden=b.dataset.filter!=='all'&&x.dataset.category!==b.dataset.filter);}));
-function route(){const about=location.hash==='#/about';$('#home-page').hidden=about;$('#about-page').hidden=!about;document.querySelectorAll('[data-nav]').forEach(n=>{if((n.dataset.nav==='about')===about)n.setAttribute('aria-current','page');else n.removeAttribute('aria-current');});if(location.hash==='#projects')requestAnimationFrame(()=>$('#projects').scrollIntoView());else window.scrollTo(0,0);}
-window.addEventListener('hashchange',route);route();
+(d.work||[]).forEach((w,i)=>{const a=el('article','work-item');a.append(el('span','work-number',String(i+1).padStart(2,'0')));const name=el('div','work-name');name.append(el('p','eyebrow',w.label),el('h3','',w.title));a.append(name);const info=el('div','work-info');info.append(el('p','',w.text));if(w.url)info.append(link(w.cta+' ↗',w.url,'text-link'));a.append(info);$('#work-list').append(a);});
+d.traits.forEach((t,i)=>{const n=el('article','trait');n.append(el('span','',String(i+1).padStart(2,'0')),el('h3','',t.title),el('p','',t.text));$('#traits').append(n);});
+function countText(n){return n+' '+(n%10===1&&n%100!==11?'проект':n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?'проекта':'проектов');}
+function filter(category){let count=0;document.querySelectorAll('[data-filter]').forEach(n=>n.setAttribute('aria-pressed',String(n.dataset.filter===category)));document.querySelectorAll('.project').forEach(n=>{n.hidden=category!=='all'&&n.dataset.category!==category;if(!n.hidden)count++;});$('#filter-status').textContent=countText(count);$('#empty-projects').hidden=count!==0;}
+document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>filter(b.dataset.filter)));
+$('.filters sup').textContent=String(d.projects.length).padStart(2,'0');filter('all');
+function route(focus=false){const hash=location.hash,about=hash==='#/about';$('#home-page').hidden=about;$('#about-page').hidden=!about;document.querySelectorAll('[data-nav]').forEach(n=>{const current=about?'about':hash==='#work'?'work':hash==='#projects'?'projects':'';if(n.dataset.nav===current)n.setAttribute('aria-current','page');else n.removeAttribute('aria-current');});const target=about?$('#about-title'):hash==='#work'?$('#work'):hash==='#projects'?$('#projects'):hash==='#main'?$('#main'):null;requestAnimationFrame(()=>{if(target){target.scrollIntoView({behavior:'instant',block:about?'start':'start'});if(focus){target.setAttribute('tabindex','-1');target.focus({preventScroll:true});}}else window.scrollTo({top:0,behavior:'instant'});});}
+window.addEventListener('hashchange',()=>route(true));route();
 })();
