@@ -7,7 +7,7 @@ function link(label,url,cls){const n=el('a',cls,label);n.href=safeUrl(url);n.tar
 document.querySelectorAll('[data-name]').forEach(n=>n.textContent=d.name);
 document.querySelectorAll('[data-github]').forEach(n=>n.href=safeUrl(d.github));
 [['#tagline','tagline'],['#intro','intro'],['#about-title','aboutTitle'],['#about-text','about'],['#approach-text','approach']].forEach(([s,k])=>$(s).textContent=d[k]);
-document.title=d.name+' — проекты и работа';$('#year').textContent=new Date().getFullYear();
+document.title=d.name+' — личные проекты';$('#year').textContent=new Date().getFullYear();
 $('#project-count').textContent=String(d.projects.length).padStart(2,'0');
 const previews={forge:'forge-preview.png',voice:'voice-preview.png'};
 d.projects.forEach((p,i)=>{
@@ -22,12 +22,11 @@ d.projects.forEach((p,i)=>{
  if(p.details?.length){const details=el('details','project-details');details.append(el('summary','','Что внутри'));const list=el('ul');p.details.forEach(t=>list.append(el('li','',t)));details.append(list);body.append(details);}
  const links=el('div','project-links');links.append(link(p.cta+' ↗',p.url,'project-cta'));if(p.source)links.append(link('Исходники ↗',p.source,'source-link'));body.append(links);a.append(visual,body);$('#project-list').append(a);
 });
-(d.work||[]).forEach((w,i)=>{const a=el('article','work-item');a.append(el('span','work-number',String(i+1).padStart(2,'0')));const name=el('div','work-name');name.append(el('p','eyebrow',w.label),el('h3','',w.title));a.append(name);const info=el('div','work-info');info.append(el('p','',w.text));if(w.url)info.append(link(w.cta+' ↗',w.url,'text-link'));a.append(info);$('#work-list').append(a);});
 d.traits.forEach((t,i)=>{const n=el('article','trait');n.append(el('span','',String(i+1).padStart(2,'0')),el('h3','',t.title),el('p','',t.text));$('#traits').append(n);});
 function countText(n){return n+' '+(n%10===1&&n%100!==11?'проект':n%10>=2&&n%10<=4&&(n%100<12||n%100>14)?'проекта':'проектов');}
 function filter(category){let count=0;document.querySelectorAll('[data-filter]').forEach(n=>n.setAttribute('aria-pressed',String(n.dataset.filter===category)));document.querySelectorAll('.project').forEach(n=>{n.hidden=category!=='all'&&n.dataset.category!==category;if(!n.hidden)count++;});$('#filter-status').textContent=countText(count);$('#empty-projects').hidden=count!==0;}
 document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>filter(b.dataset.filter)));
 $('.filters sup').textContent=String(d.projects.length).padStart(2,'0');filter('all');
-function route(focus=false){const hash=location.hash,about=hash==='#/about';$('#home-page').hidden=about;$('#about-page').hidden=!about;document.querySelectorAll('[data-nav]').forEach(n=>{const current=about?'about':hash==='#work'?'work':hash==='#projects'?'projects':'';if(n.dataset.nav===current)n.setAttribute('aria-current','page');else n.removeAttribute('aria-current');});const target=about?$('#about-title'):hash==='#work'?$('#work'):hash==='#projects'?$('#projects'):hash==='#main'?$('#main'):null;requestAnimationFrame(()=>{if(target){target.scrollIntoView({behavior:'instant',block:about?'start':'start'});if(focus){target.setAttribute('tabindex','-1');target.focus({preventScroll:true});}}else window.scrollTo({top:0,behavior:'instant'});});}
+function route(focus=false){const hash=location.hash,about=hash==='#/about';$('#home-page').hidden=about;$('#about-page').hidden=!about;document.querySelectorAll('[data-nav]').forEach(n=>{const current=about?'about':hash==='#projects'?'projects':'';if(n.dataset.nav===current)n.setAttribute('aria-current','page');else n.removeAttribute('aria-current');});const target=about?$('#about-title'):hash==='#projects'?$('#projects'):hash==='#main'?$('#main'):null;requestAnimationFrame(()=>{if(target){target.scrollIntoView({behavior:'instant',block:about?'start':'start'});if(focus){target.setAttribute('tabindex','-1');target.focus({preventScroll:true});}}else window.scrollTo({top:0,behavior:'instant'});});}
 window.addEventListener('hashchange',()=>route(true));route();
 })();
