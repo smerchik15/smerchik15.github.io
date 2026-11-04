@@ -7,6 +7,8 @@ function link(label,url,cls){const n=el('a',cls,label);n.href=safeUrl(url);n.tar
 document.querySelectorAll('[data-name]').forEach(n=>n.textContent=d.name);
 document.querySelectorAll('[data-github]').forEach(n=>n.href=safeUrl(d.github));
 [['#tagline','tagline'],['#intro','intro'],['#about-title','aboutTitle'],['#about-text','about'],['#approach-text','approach']].forEach(([s,k])=>$(s).textContent=d[k]);
+// Local menu preference only; the linked Site independently requires owner authentication.
+try{if(localStorage.getItem('portfolio-work-menu-v1')==='1'){const draftLink=link('Черновик ↗','https://vladislav-work-draft.vladislavmitro.chatgpt.site/','owner-draft-link');draftLink.title='Закрытые рабочие проекты · вход через ChatGPT';document.querySelector('header nav').append(draftLink);}}catch{}
 document.title=d.name+' — личные проекты';$('#year').textContent=new Date().getFullYear();
 $('#project-count').textContent=String(d.projects.length).padStart(2,'0');
 const previews={forge:'forge-preview.png',voice:'voice-preview.png'};
