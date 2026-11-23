@@ -36,6 +36,7 @@ function stage(p){
  if(p.id==='tick'){const image=element('img','tick-art');image.src='tick-original.svg';image.alt='Оригинальный клещ с янтарным брюшком и зелёным панцирем';image.width=420;image.height=310;box.append(image);}
  else if(p.id==='forge'||p.id==='voice'){const image=element('img','app-preview');image.src=p.id==='forge'?'forge-preview.png':'voice-preview.png';image.alt='Интерфейс '+p.title;image.width=p.id==='forge'?699:855;image.height=p.id==='forge'?662:664;box.append(image);}
  else if(p.id==='sergey-mitrofanov'){const image=element('img','app-preview');image.src='sergey-mitrofanov-preview.jpg';image.alt='Главная страница сайта застройщика Сергея Митрофанова';image.width=1265;image.height=713;box.append(image);}
+ else if(p.id==='onlimit-gaming'){const image=element('img','app-preview');image.src='onlimit-gaming-preview.png';image.alt='Главная страница игрового блога Onlimit Gaming';image.width=1440;image.height=1000;box.append(image);}
  else if(p.id==='workshop'){const board=element('div','idea-board');board.setAttribute('aria-label','Идеи, обсуждение и план');const paper=element('div','idea-paper');paper.append(element('span','paper-rule'),element('strong','','Мастерская'),element('span','','Идеи и задачи'));const notes=element('div','idea-notes');['Идея','Обсуждение','План'].forEach(t=>notes.append(element('span','',t)));board.append(paper,notes);box.append(board);}
  else box.append(icon(p),element('span','generic-title',p.title));
  return box;

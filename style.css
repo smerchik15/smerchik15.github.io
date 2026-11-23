@@ -11,3 +11,5 @@
 @media(max-width:600px){.project-tab{min-height:111px;gap:9px}.project-tab-copy{margin-top:0}}@media(max-width:360px){.filters{flex-wrap:wrap}.filters button{font-size:.875rem}.main-nav a{font-size:.875rem}}
 
 .stage-sergey-mitrofanov{background:#E1ECE8}.stage-sergey-mitrofanov .app-preview{height:auto;width:calc(100% - 40px);max-height:none;margin:20px 0;align-self:center;border-radius:8px}@media(min-width:601px) and (max-width:840px){.project-tabs{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(145px,1fr);grid-template-columns:none;overflow-x:auto;padding-bottom:9px;scrollbar-width:thin}}@media(max-width:600px){.filters{flex-wrap:wrap}}
+
+.stage-onlimit-gaming{background:#111A15}.stage-onlimit-gaming .app-preview{height:auto;width:calc(100% - 40px);max-height:none;margin:20px 0;align-self:center;border-radius:8px}
